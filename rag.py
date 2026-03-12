@@ -2,7 +2,6 @@ import os
 import re
 from urllib.parse import quote
 import xml.etree.ElementTree as ET
-
 from ollama import apply_first_criteria_with_llm
 from bibtex_utils import extract_bib_field
 
@@ -27,7 +26,6 @@ def apply_search_string(bib_path: str):
         "robotic",
         "humanoid",
     ]
-
     selected = []
 
     for entry in raw_entries:
@@ -66,12 +64,7 @@ def apply_search_string(bib_path: str):
     return selected
 
 
-def save_systematic_review_selection(
-    selected_entries,
-    base_dir: str = "process",
-    search_folder: str = "search_string",
-    filename: str = "selected.bib",
-) -> str:
+def save_systematic_review_selection(selected_entries,base_dir: str = "process",search_folder: str = "search_string",filename: str = "selected.bib"):
     out_dir = os.path.join(base_dir, search_folder)
     os.makedirs(out_dir, exist_ok=True)
 
@@ -98,7 +91,5 @@ def main():
         selected_bib_path=search_string_path
     )
     print(f"First criteria application file: {first_criteria_path}")
-
-
 if __name__ == "__main__":
     main()
