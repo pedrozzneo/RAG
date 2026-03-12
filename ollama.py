@@ -2,6 +2,7 @@ import json
 import re
 import os
 import requests
+from bibtex_utils import extract_bib_field
 
 
 def ask_ollama(prompt: str, model: str = "llama3.2:1b") -> str:
@@ -27,7 +28,6 @@ def apply_first_criteria_with_llm(
     out_filename: str = "first_criteria.bib",
     model: str = "llama3.2:1b",
 ) -> str:
-    from rag import _extract_bib_field  # avoid circular imports for other helpers
 
     with open(selected_bib_path, "r", encoding="utf-8") as f:
         text = f.read()
@@ -56,7 +56,7 @@ def apply_first_criteria_with_llm(
             "IMPORTANT:\n"
             "- Base your decision ONLY on the TITLE and ABSTRACT below.\n"
             "- Decide which IC* and EC* codes from the lists above clearly apply.\n"
-            "- If you are unsure about a criterion, set the status to UNDECIDED.\n"
+            "- If you are unsure about a criterion, DO NOT include its code in the output.\n"
             "- Do not try to infer details that are not suggested by the title/abstract.\n\n"
             "Return your answer ONLY as a compact JSON object with this exact structure (no explanations, no extra keys, no comments):\n"
             '{\"IC\": [\"IC1\", \"IC3\"], \"EC\": [\"EC3\"]}\n\n'
@@ -72,16 +72,16 @@ def apply_first_criteria_with_llm(
         ec_list = []
         try:
             data = json.loads(raw)
-            ic_list = [c for c in data.get("IC", []) if isinstance(c, str)]
-            ec_list = [c for c in data.get("EC", []) if isinstance(c, str)]
+            raw_ic = [c for c in data.get("IC", []) if isinstance(c, str)]
+            raw_ec = [c for c in data.get("EC", []) if isinstance(c, str)]
         except Exception:
             # Fallback: try to detect codes with regex if not valid JSON
-            ic_list = re.findall(r"\bIC[1-3]\b", raw)
-            ec_list = re.findall(r"\bEC[1-5]\b", raw)
+            raw_ic = re.findall(r"\bIC[1-3]\b", raw)
+            raw_ec = re.findall(r"\bEC[1-5]\b", raw)
 
-        # Normalize and deduplicate
-        ic_list = sorted(set(ic_list))
-        ec_list = sorted(set(ec_list))
+        # Keep only valid IC*/EC* codes, normalize and deduplicate
+        ic_list = sorted({c for c in raw_ic if re.fullmatch(r"IC[1-3]", c)})
+        ec_list = sorted({c for c in raw_ec if re.fullmatch(r"EC[1-5]", c)})
 
         # Build final criteria and status
         all_codes = ic_list + ec_list
@@ -92,15 +92,16 @@ def apply_first_criteria_with_llm(
         else:
             status = "UNDECIDED"
 
-        criteria_str = ", ".join(all_codes) if all_codes else "NONE"
+        # If nothing applies, leave criteria empty and rely on llmStatus=UNDECIDED
+        criteria_str = ", ".join(all_codes) if all_codes else ""
         return criteria_str, status
 
     with open(out_path, "w", encoding="utf-8") as out_f:
         for idx, entry in enumerate(raw_entries, start=1):
             entry_strip = entry.strip()
 
-            title = _extract_bib_field(entry_strip, "title")
-            abstract = _extract_bib_field(entry_strip, "abstract")
+            title = extract_bib_field(entry_strip, "title")
+            abstract = extract_bib_field(entry_strip, "abstract")
 
             print(f"[FirstCriteria] ({idx}/{total}) evaluating: {title[:80]}")
             criteria_str, status = _extract_llm_decision(title, abstract)

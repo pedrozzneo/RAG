@@ -4,18 +4,10 @@ from urllib.parse import quote
 import xml.etree.ElementTree as ET
 
 from ollama import apply_first_criteria_with_llm
-
-def _extract_bib_field(entry_text: str, field_name: str) -> str:
-    pattern = rf"{field_name}\s*=\s*[\{{\"](?P<val>.*?)[\}}\"][\s,]*$"
-    m = re.search(pattern, entry_text, flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
-    if not m:
-        return ""
-    value = m.group("val")
-    value = re.sub(r"\s+", " ", value)
-    return value.strip()
+from bibtex_utils import extract_bib_field
 
 
-def filter_bib_for_systematic_review(bib_path: str):
+def apply_search_string(bib_path: str):
     with open(bib_path, "r", encoding="latin-1") as f:
         text = f.read()
 
@@ -47,9 +39,9 @@ def filter_bib_for_systematic_review(bib_path: str):
         m_key = re.match(r"@\w+\s*{\s*([^,]+),", entry_strip)
         key = m_key.group(1).strip() if m_key else ""
 
-        title = _extract_bib_field(entry_strip, "title")
-        abstract = _extract_bib_field(entry_strip, "abstract")
-        keywords = _extract_bib_field(entry_strip, "keywords") or _extract_bib_field(
+        title = extract_bib_field(entry_strip, "title")
+        abstract = extract_bib_field(entry_strip, "abstract")
+        keywords = extract_bib_field(entry_strip, "keywords") or extract_bib_field(
             entry_strip, "keyword"
         )
 
@@ -95,7 +87,7 @@ def save_systematic_review_selection(
 def main():
     # 1) Filter (first process: search_string)
     bib_path = os.path.join("db_source", "test.bib")
-    selected = filter_bib_for_systematic_review(bib_path)
+    selected = apply_search_string(bib_path)
     search_string_path = save_systematic_review_selection(selected)
 
     print(f"\nFirst process (search_string) completed.")
@@ -106,4 +98,7 @@ def main():
         selected_bib_path=search_string_path
     )
     print(f"First criteria application file: {first_criteria_path}")
-main()
+
+
+if __name__ == "__main__":
+    main()
