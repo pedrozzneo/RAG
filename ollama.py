@@ -23,8 +23,8 @@ def ask_ollama(prompt: str, model: str = "llama3.2:1b") -> str:
 
 
 def apply_first_criteria_with_llm(
-    selected_bib_path: str = os.path.join("process", "search_string", "selected.bib"),
-    out_dir: str = os.path.join("process", "first_criteria_application"),
+    selected_bib_path: str = os.path.join("results", "search_string", "selected.bib"),
+    out_dir: str = os.path.join("results", "first_criteria_application"),
     out_filename: str = "first_criteria.bib",
     model: str = "llama3.2:1b",
 ) -> str:
