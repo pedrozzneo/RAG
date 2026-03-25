@@ -3,24 +3,7 @@ import os
 from utils import extract_bib_field
 from openai import OpenAI
 
-def apply_first_criteria_with_llm(selected_bib_path):
-
-    out_dir = os.path.join("results", "first_criteria_application")
-    out_filename = "first_criteria.bib"
-
-    with open(selected_bib_path, "r", encoding="utf-8") as f:
-        text = f.read()
-
-    print(text)
-
-    raw_entries = [e for e in re.split(r"\n(?=@)", text) if e.strip().startswith("@")]
-    total = len(raw_entries)
-    print(f"\nStarting LLM evaluation for {total} studies...")
-
-    os.makedirs(out_dir, exist_ok=True)
-    out_path = os.path.join(out_dir, out_filename)
-
-    def _build_prompt(title: str, abstract: str) -> str:
+def _build_prompt(title: str, abstract: str) -> str:
         return (
             "You are assisting in a systematic literature review about service-oriented robotic systems.\n"
             "Your task is to return a list of checked inclusion criteria, a list of checked exclusion criteria and the llmStatus like this: included = [LIST OF INCLUDED CRITERIAS], excluded = [LIST OF EXCLUDED CRITERIAS], llmStatus = [LLMSTATUS]\n"
@@ -52,6 +35,22 @@ def apply_first_criteria_with_llm(selected_bib_path):
             f"TITLE: {title.strip()}\n"
             f"ABSTRACT: {abstract.strip()}\n"
         )
+
+def apply_first_criteria_with_llm(selected_bib_path):
+    out_dir = os.path.join("results", "first_criteria_application")
+    out_filename = "first_criteria.bib"
+
+    with open(selected_bib_path, "r", encoding="utf-8") as f:
+        text = f.read()
+
+    print(text)
+
+    raw_entries = [e for e in re.split(r"\n(?=@)", text) if e.strip().startswith("@")]
+    total = len(raw_entries)
+    print(f"\nStarting LLM evaluation for {total} studies...")
+
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, out_filename)
 
     with open(out_path, "w", encoding="utf-8") as out_f:
         for idx, entry in enumerate(raw_entries, start=1):
