@@ -7,7 +7,6 @@ def apply_first_criteria_with_llm(selected_bib_path):
 
     out_dir = os.path.join("results", "first_criteria_application")
     out_filename = "first_criteria.bib"
-    model = "llama3.2:1b"
 
     with open(selected_bib_path, "r", encoding="utf-8") as f:
         text = f.read()
@@ -64,7 +63,6 @@ def apply_first_criteria_with_llm(selected_bib_path):
             print(f"[FirstCriteria] ({idx}/{total}) evaluating: {title[:80]}")
         
             prompt = _build_prompt(title, abstract)
-            # response = ask_ollama(prompt, model=model)
 
             client = OpenAI()
             response = client.responses.create(
