@@ -1,6 +1,6 @@
 import re
 import os
-from bibtex_utils import extract_bib_field
+from utils import extract_bib_field
 from openai import OpenAI
 
 def apply_first_criteria_with_llm(selected_bib_path):
