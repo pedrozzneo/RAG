@@ -1,5 +1,5 @@
 import os
-from openaiLLM import apply_first_criteria_with_llm
+from LLMs.GPT import apply_first_criteria_with_llm
 
 def main():
     bib_path = os.path.join("db_source", "one.bib")
