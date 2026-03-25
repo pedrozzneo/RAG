@@ -1,26 +1,7 @@
-import json
 import re
 import os
-import requests
 from bibtex_utils import extract_bib_field
 from openai import OpenAI
-
-def ask_ollama(prompt: str, model: str = "llama3.2:1b") -> str:
-    url = "http://localhost:11434/api/generate"
-    payload = {
-        "model": model,
-        "prompt": prompt,
-        "stream": False,
-    }
-
-    resp = requests.post(url, json=payload, timeout=60)
-
-    if resp.status_code != 200:
-        return ""
-
-    data = resp.json()
-    return data.get("response", "")
-
 
 def apply_first_criteria_with_llm(selected_bib_path):
 
@@ -72,37 +53,6 @@ def apply_first_criteria_with_llm(selected_bib_path):
             f"TITLE: {title.strip()}\n"
             f"ABSTRACT: {abstract.strip()}\n"
         )
-
-    # def _extract_llm_decision(title: str, abstract: str):
-    #     prompt = _build_prompt(title, abstract)
-    #     raw = ask_ollama(prompt, model=model)
-    #     ic_list = []
-    #     ec_list = []
-    #     try:
-    #         data = json.loads(raw)
-    #         raw_ic = [c for c in data.get("IC", []) if isinstance(c, str)]
-    #         raw_ec = [c for c in data.get("EC", []) if isinstance(c, str)]
-    #     except Exception:
-    #         # Fallback: try to detect codes with regex if not valid JSON
-    #         raw_ic = re.findall(r"\bIC[1-3]\b", raw)
-    #         raw_ec = re.findall(r"\bEC[1-5]\b", raw)
-
-    #     # Keep only valid IC*/EC* codes, normalize and deduplicate
-    #     ic_list = sorted({c for c in raw_ic if re.fullmatch(r"IC[1-3]", c)})
-    #     ec_list = sorted({c for c in raw_ec if re.fullmatch(r"EC[1-5]", c)})
-
-    #     # Build final criteria and status
-    #     all_codes = ic_list + ec_list
-    #     if ec_list:
-    #         status = "EXCLUDED"
-    #     elif ic_list:
-    #         status = "INCLUDED"
-    #     else:
-    #         status = "UNDECIDED"
-
-    #     # If nothing applies, leave criteria empty and rely on llmStatus=UNDECIDED
-    #     criteria_str = ", ".join(all_codes) if all_codes else ""
-    #     return criteria_str, status
 
     with open(out_path, "w", encoding="utf-8") as out_f:
         for idx, entry in enumerate(raw_entries, start=1):
