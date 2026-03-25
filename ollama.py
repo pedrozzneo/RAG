@@ -62,10 +62,7 @@ def apply_first_criteria_with_llm(selected_bib_path):
             abstract = extract_bib_field(entry_strip, "abstract")
 
             print(f"[FirstCriteria] ({idx}/{total}) evaluating: {title[:80]}")
-            # prompt = _build_prompt(title, abstract)
-            # criteria_str, status = _extract_llm_decision(title, abstract)
-            # print(f"[FirstCriteria] --> llmCriteria={criteria_str} | llmStatus={status}")
-            
+        
             prompt = _build_prompt(title, abstract)
             # response = ask_ollama(prompt, model=model)
 
