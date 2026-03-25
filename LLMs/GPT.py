@@ -20,7 +20,7 @@ def apply_first_criteria_with_llm(selected_bib_path):
     os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(out_dir, out_filename)
 
-    with open(out_path, "w", encoding="utf-8") as out_f:
+    with open(out_path, "w", encoding="utf-8"):
         for idx, entry in enumerate(raw_entries, start=1):
             entry_strip = entry.strip()
 
@@ -39,7 +39,7 @@ def apply_first_criteria_with_llm(selected_bib_path):
 
             print(response.output_text)
 
-            out_f.write(response.output_text)
-            out_f.write("\n\n")
+            out_path.write(response.output_text)
+            out_path.write("\n\n")
     return out_path
 
