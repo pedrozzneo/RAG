@@ -15,15 +15,15 @@ def build_prompt1(title: str, abstract: str) -> str:
             "EC4: The study is a previous version of a more complete study about the same research.\n"
             "EC5: The primary study is a table of contents, short course description, tutorial, copyright form or summary of an event.\n\n"
 
-            "you will put all the identified inclusion criterias in a list called included like this: included = ['IC1', 'IC2']\n"
-            "you will put all the identified exclusion criterias in a list called excluded like this: excluded = ['EC1', 'EC4']\n" 
-            "analysing those 2 lists YOU created (included and excluded) you will determine the llm status, following these rules:\n"
-            "- if the included list is NOT empty and the excluded list is empty, the llm status will be INCLUDED\n"
-            "- if the excluded list is NOT empty and the included list is empty, the llm status will be EXCLUDED\n"
-            "- Any other situation, meaning the llm status is NOT INCLUDED and NOT EXCLUDED, the llm status be marked as PENDING\n"
+            "you will put all the identified inclusion and exclusion criterias in a list called llmCriterias like this: llmCriterias = ['IC1', 'IC2', 'EC2']\n"
+            "analysing this llmCriterias list YOU created you will determine the llm status, following these rules:\n"
+            "- if the number of inclusion criterias is more than 0 and the number of exclusion criteria is 0, the llm status will be INCLUDED\n"
+            "- if the number of inclusion criterias is 0 and the number of exclusion criteria is more than 0, the llm status will be EXCLUDED\n"
+            "- Any other situation, meaning the number of inclusion and exclusion criterias is more than 0, the llm status be marked as PENDING\n"
 
             "IMPORTANT:\n"
             "- If you are unsure about a criteria, DO NOT include its code in the output.\n"
+            "Return ONLY a JSON object containing the key-value pairs of the criterias found (put together the inclusino criterias and the exclusion criterias) and the llmstatus "
             "- Do not try to infer details that are not suggested by the title/abstract.\n\n"
 
             "Now analyze this study:\n\n"
