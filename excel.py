@@ -36,3 +36,14 @@ def save_db_source_in_excel(dbPath):
         dataFrame.loc[index, "db status"] = dbStatus
 
         dataFrame.to_excel("results/excelResults.xlsx", index=False)
+
+def compare_ai_accuracy_status(ai):
+    dataFrame = pd.read_excel("results/excelResults.xlsx")
+    rightCount = 0
+
+    for i in range(len(dataFrame) - 1):
+        if(dataFrame["db status"][i] == dataFrame[f"{ai} status"][i]):
+            print(f"{dataFrame["db status"][i]} is the same as {dataFrame[f"{ai} status"][i]}: rightCount: {rightCount}")
+            rightCount += 1
+    
+    print(f"percentage: {rightCount/(len(dataFrame)-1)}")

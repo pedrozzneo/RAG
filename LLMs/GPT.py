@@ -3,7 +3,7 @@ import json
 from openai import OpenAI
 from prompts import build_prompt1
 from utils import extract_bib_field, getStudies
-from excel import save_llm_results_in_excel
+from excel import save_llm_results_in_excel, compare_ai_accuracy_status
 
 
 def apply_first_criteria_with_llm(selected_bib_path):
@@ -32,15 +32,11 @@ def apply_first_criteria_with_llm(selected_bib_path):
             )
 
             responseDict = json.loads(response.output_text)
-            
+
             llmCriterias = ", ".join(responseDict["llmCriterias"])
             llmStatus = responseDict["llmStatus"]
 
-            # Isolated save 
-            result_dir.write(response.output_text)
-            result_dir.write("\n\n")
-
-            # Save in excel as well to compare
+            result_dir.write(response.output_text + "\n\n")
             save_llm_results_in_excel("GPT", index, llmCriterias, llmStatus)
-    return result_dir
 
+        compare_ai_accuracy_status("GPT")
