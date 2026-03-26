@@ -5,8 +5,8 @@ def save_llm_results_in_excel(ai, index, criterias, status):
     dataFrame = pd.read_excel("results/excelResults.xlsx")
 
     # Solve dtypes issues when the columns are empty
-    dataFrame[f"{ai} criterias"] = dataFrame["title"].astype("object")
-    dataFrame[f"{ai} status"] = dataFrame["db criterias"].astype("object")
+    dataFrame[f"{ai} criterias"] = dataFrame[f"{ai} criterias"].astype("object")
+    dataFrame[f"{ai} status"] = dataFrame[f"{ai} status"].astype("object")
 
     dataFrame.loc[index,f"{ai} criterias"]= criterias
     dataFrame.loc[index,f"{ai} status"]= status
