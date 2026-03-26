@@ -4,12 +4,14 @@ from utils import getStudies, extract_bib_field
 def save_llm_results_in_excel(ai, index, criterias, status):
     dataFrame = pd.read_excel("results/excelResults.xlsx")
 
+    # Solve dtypes issues when the columns are empty
+    dataFrame[f"{ai} criterias"] = dataFrame["title"].astype("object")
+    dataFrame[f"{ai} status"] = dataFrame["db criterias"].astype("object")
+
     dataFrame.loc[index,f"{ai} criterias"]= criterias
     dataFrame.loc[index,f"{ai} status"]= status
 
     dataFrame.to_excel("results/excelResults.xlsx", index=False)
-    
-# save_llm_results_in_excel("GPT", 0, "IC4", "INCLUDED")
 
 def save_db_source_in_excel(dbPath):
     with open(dbPath) as f: 
@@ -34,5 +36,3 @@ def save_db_source_in_excel(dbPath):
         dataFrame.loc[index, "db status"] = dbStatus
 
         dataFrame.to_excel("results/excelResults.xlsx", index=False)
-        
-save_db_source_in_excel("db_source/one.bib")
