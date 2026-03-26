@@ -1,8 +1,10 @@
-import re
 import os
-from utils import extract_bib_field, getStudies
+import json
 from openai import OpenAI
 from prompts import build_prompt1
+from utils import extract_bib_field, getStudies
+from excel import save_llm_results_in_excel
+
 
 def apply_first_criteria_with_llm(selected_bib_path):
     result_dir = os.path.join("results", "GPT", "first_criteria.txt")
@@ -29,9 +31,16 @@ def apply_first_criteria_with_llm(selected_bib_path):
                 input=prompt
             )
 
-            print(response.output_text)
+            responseDict = json.loads(response.output_text)
+            
+            llmCriterias = ", ".join(responseDict["llmCriterias"])
+            llmStatus = responseDict["llmStatus"]
 
+            # Isolated save 
             result_dir.write(response.output_text)
             result_dir.write("\n\n")
+
+            # Save in excel as well to compare
+            save_llm_results_in_excel("GPT", index, llmCriterias, llmStatus)
     return result_dir
 
