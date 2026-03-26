@@ -9,3 +9,5 @@ def extract_bib_field(entry_text: str, field_name: str) -> str:
     value = re.sub(r"\s+", " ", value)
     return value.strip()
 
+def getStudies(text):
+    return [e for e in re.split(r"\n(?=@)", text) if e.strip().startswith("@")]

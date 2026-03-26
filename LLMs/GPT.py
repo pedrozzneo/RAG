@@ -1,6 +1,6 @@
 import re
 import os
-from utils import extract_bib_field
+from utils import extract_bib_field, getStudies
 from openai import OpenAI
 from prompts import build_prompt1
 
@@ -10,16 +10,16 @@ def apply_first_criteria_with_llm(selected_bib_path):
     with open(selected_bib_path, "r", encoding="utf-8") as f:
         text = f.read()
 
-    studies = [e for e in re.split(r"\n(?=@)", text) if e.strip().startswith("@")]
-    total = len(studies)
-    print(f"\nStarting LLM evaluation for {total} studies...")
+    studies = getStudies(text)
+    studiesLen = len(studies)
+    print(f"\nStarting LLM evaluation for {studiesLen} studies...")
 
     with open(result_dir, "w", encoding="utf-8") as result_dir:
-        for index, study in enumerate(studies, start=6):
+        for index, study in enumerate(studies):
             title = extract_bib_field(study, "title")
             abstract = extract_bib_field(study, "abstract")
 
-            print(f"[FirstCriteria] ({index}/{total}) evaluating: {title[:80]}")
+            print(f"({index+1}/{studiesLen}) -> Evaluating: {title[:80]} ")
         
             prompt = build_prompt1(title, abstract)
 
