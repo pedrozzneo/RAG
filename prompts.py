@@ -36,7 +36,7 @@ def build_prompt2(title: str, abstract: str) -> str:
             "You are assisting in a systematic literature review about service-oriented robotic systems.\n"
             "Your task is to return as a JSON object the following key-value pairs:\n"
             "1- the key is llmCriterias and the value is a list of checked inclusion and exclusion criterias like this: llmCriterias = ['IC1', 'EC2', 'IC2']\n"
-            "2- the key is llmStatus and the content is a string like this: llmStatus = [INCLUDED] or llmStatus = [EXCLUDED] or llmStatus = [PENDING] \n"
+            "2- the key is llmStatus and the content is a string like this: llmStatus = INCLUDED or llmStatus = EXCLUDED or llmStatus = PENDING \n"
 
             "To define the llmCriterias, use this source below:\n"
 
@@ -79,7 +79,7 @@ def build_prompt3(title: str, abstract: str) -> str:
 
             "Your task is to return as a JSON object the following key-value pairs:\n"
             "1- the key is llmCriterias and the value is a list of checked inclusion and exclusion criterias like this: llmCriterias = ['IC1', 'EC2', 'IC2']\n"
-            "2- the key is llmStatus and the content is a string like this: llmStatus = [INCLUDED] or llmStatus = [EXCLUDED] or llmStatus = [PENDING] \n"
+            "2- the key is llmStatus and the content is a string like this: llmStatus = INCLUDED or llmStatus = EXCLUDED or llmStatus = PENDING \n"
 
             "To define the llmCriterias, use this source below:\n"
 

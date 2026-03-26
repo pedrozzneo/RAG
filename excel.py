@@ -1,8 +1,8 @@
 import pandas as pd
 from utils import getStudies, extract_bib_field
 
-def save_llm_results_in_excel(ai, index, criterias, status):
-    dataFrame = pd.read_excel("results/excelResults.xlsx")
+def save_llm_results_in_excel(ai, promptNumber, index, criterias, status):
+    dataFrame = pd.read_excel(f"results/{ai}/prompt{promptNumber+1}/excelResults.xlsx")
 
     # Solve dtypes issues when the columns are empty
     dataFrame[f"{ai} criterias"] = dataFrame[f"{ai} criterias"].astype("object")
@@ -11,7 +11,7 @@ def save_llm_results_in_excel(ai, index, criterias, status):
     dataFrame.loc[index,f"{ai} criterias"]= criterias
     dataFrame.loc[index,f"{ai} status"]= status
 
-    dataFrame.to_excel("results/excelResults.xlsx", index=False)
+    dataFrame.to_excel(f"results/{ai}/prompt{promptNumber+1}/excelResults.xlsx", index=False)
 
 def save_db_source_in_excel(dbPath):
     with open(dbPath) as f: 
@@ -37,8 +37,8 @@ def save_db_source_in_excel(dbPath):
 
         dataFrame.to_excel("results/excelResults.xlsx", index=False)
 
-def compare_ai_accuracy_status(ai):
-    dataFrame = pd.read_excel("results/excelResults.xlsx")
+def compare_ai_accuracy_status(ai, promptNumber):
+    dataFrame = pd.read_excel(f"results/{ai}/prompt{promptNumber+1}/excelResults.xlsx")
     rightCount = 0
 
     for i in range(len(dataFrame) - 1):
