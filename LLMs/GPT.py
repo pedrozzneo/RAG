@@ -5,21 +5,21 @@ from openai import OpenAI
 from prompts import build_prompt1
 
 def apply_first_criteria_with_llm(selected_bib_path):
-    out_dir = os.path.join("results", "GPT", "first_criteria.txt")
+    result_dir = os.path.join("results", "GPT", "first_criteria.txt")
 
     with open(selected_bib_path, "r", encoding="utf-8") as f:
         text = f.read()
 
-    raw_entries = [e for e in re.split(r"\n(?=@)", text) if e.strip().startswith("@")]
-    total = len(raw_entries)
+    studies = [e for e in re.split(r"\n(?=@)", text) if e.strip().startswith("@")]
+    total = len(studies)
     print(f"\nStarting LLM evaluation for {total} studies...")
 
-    with open(out_dir, "w", encoding="utf-8") as out_dir:
-        for idx, entry in enumerate(raw_entries, start=6):
-            title = extract_bib_field(entry, "title")
-            abstract = extract_bib_field(entry, "abstract")
+    with open(result_dir, "w", encoding="utf-8") as result_dir:
+        for index, study in enumerate(studies, start=6):
+            title = extract_bib_field(study, "title")
+            abstract = extract_bib_field(study, "abstract")
 
-            print(f"[FirstCriteria] ({idx}/{total}) evaluating: {title[:80]}")
+            print(f"[FirstCriteria] ({index}/{total}) evaluating: {title[:80]}")
         
             prompt = build_prompt1(title, abstract)
 
@@ -31,7 +31,7 @@ def apply_first_criteria_with_llm(selected_bib_path):
 
             print(response.output_text)
 
-            out_dir.write(response.output_text)
-            out_dir.write("\n\n")
-    return out_dir
+            result_dir.write(response.output_text)
+            result_dir.write("\n\n")
+    return result_dir
 
